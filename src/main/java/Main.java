@@ -23,14 +23,16 @@ public class Main {
         String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
         String fileNameCsv = "data.csv";
         String fileNameXml = "data.xml";
+        String jsonFileNameCsv = "data_csv.json";
+        String jsonFileNameXml = "data_xml.json";
 
         List<Employee> listCsv = parseCSV(columnMapping, fileNameCsv);
         String json = listToJson(listCsv);
-        writeString(json);
+        writeString(json, jsonFileNameCsv);
 
         List<Employee> listXml = parseXML(fileNameXml);
         String json1 = listToJson(listXml);
-        writeString(json1);
+        writeString(json1, jsonFileNameXml);
     }
 
     public static List<Employee> parseCSV(String[] column, String fileName) {
@@ -38,7 +40,7 @@ public class Main {
         try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
             ColumnPositionMappingStrategy<Employee> strategy = new ColumnPositionMappingStrategy<>();
             strategy.setType(Employee.class);
-            strategy.setColumnMapping("id", "firstName", "lastName", "country", "age");
+            strategy.setColumnMapping(column);
             CsvToBean<Employee> csv = new CsvToBeanBuilder<Employee>(reader).
                     withMappingStrategy(strategy).
                     build();
@@ -57,8 +59,8 @@ public class Main {
         return gson.toJson(employeeList, listType);
     }
 
-    public static void writeString(String jsonString) {
-        try (FileWriter fr = new FileWriter("data.json")) {
+    public static void writeString(String jsonString, String outFile) {
+        try (FileWriter fr = new FileWriter(outFile)) {
             fr.write(jsonString);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -78,7 +80,7 @@ public class Main {
                 if (Node.ELEMENT_NODE == node.getNodeType()) {
                     Element employee = (Element) node;
                     NodeList nlId = employee.getElementsByTagName("id");
-                    for(int j = 0; j < nlId.getLength(); j++){
+                    for (int j = 0; j < nlId.getLength(); j++) {
                         employeeList.add(new Employee(Long.parseLong(nlId.item(j).getTextContent()),
                                 employee.getElementsByTagName("firstName").item(j).getTextContent(),
                                 employee.getElementsByTagName("lastName").item(j).getTextContent(),
