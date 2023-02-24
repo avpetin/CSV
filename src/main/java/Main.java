@@ -75,20 +75,16 @@ public class Main {
             NodeList nodeList = root.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                short nType = node.getNodeType();
-                if (Node.ELEMENT_NODE == nType) {
+                if (Node.ELEMENT_NODE == node.getNodeType()) {
                     Element employee = (Element) node;
-                    NamedNodeMap map = employee.getAttributes();
-                    for(int j = 0; j < map.getLength(); j++){
-                        String id = map.item(j).getNodeName();
-                        String id1 = map.item(j).getNodeValue();
-/*                        employeeList.add(new Employee(Long.getLong(id),
-                                employee.getAttribute("firstName"),
-                                employee.getAttribute("lastName"),
-                                employee.getAttribute("country"),
-                                Integer.getInteger(employee.getAttribute("age"))));*/
+                    NodeList nlId = employee.getElementsByTagName("id");
+                    for(int j = 0; j < nlId.getLength(); j++){
+                        employeeList.add(new Employee(Long.parseLong(nlId.item(j).getTextContent()),
+                                employee.getElementsByTagName("firstName").item(j).getTextContent(),
+                                employee.getElementsByTagName("lastName").item(j).getTextContent(),
+                                employee.getElementsByTagName("country").item(j).getTextContent(),
+                                Integer.parseInt(employee.getElementsByTagName("age").item(j).getTextContent())));
                     }
-
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
